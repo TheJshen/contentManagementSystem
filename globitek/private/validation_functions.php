@@ -42,5 +42,30 @@
     return has_length($value, ['min' => 8, 'max' => 255]);
   }
 
+  // checks that string doesn't contain invalid characters for names
+  function validate_name_chars($value) {
+    return preg_match('/\A[A-Za-z\s\-,\.\']+\Z/', $value);
+  }
+
+  // checks that string doesn't contain invalid characters for email
+  function validate_email_chars($value) {
+    return preg_match('/\A[A-Za-z\d\_\.\@]+\Z/', $value);
+  }
+
+  // checks that string doesn't contain invalid characters for username
+  function validate_username_chars($value) {
+    return preg_match('/\A[A-Za-z\d\_]+\Z/', $value);
+  }
+
+  function validate_unique_username($value) {
+    global $db;
+    $sql = "SELECT * FROM users WHERE username='{$value}';";
+    $query_result = db_query($db, $sql);
+    if($query_result->num_rows == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
 ?>

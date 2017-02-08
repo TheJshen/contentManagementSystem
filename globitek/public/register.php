@@ -41,15 +41,21 @@
     if(is_blank($first_name)) {
       $errors[] = "First name cannot be blank.";
     } elseif(!validate_name_length($first_name)) {
-      $errors[] = "First name must be between 2 and 255 characters.";
+      $errors[] = "First name must be between 2 \nand 255 characters.";
+    } elseif(!validate_name_chars($first_name)) {
+      $errors[] = "First name must contain only \nletters, spaces, and the symbols(-,.).";
     }
     if(is_blank($last_name)) {
       $errors[] = "Last name cannot be blank.";
     } elseif(!validate_name_length($last_name)) {
       $errors[] = "Last name must be between 2 and 255 characters.";
+    } elseif(!validate_name_chars($last_name)) {
+      $errors[] = "Last name must contain only letters, spaces, and the symbols(-,.).";
     }
     if(is_blank($email)) {
       $errors[] = "E-Mail cannot be blank.";
+    } elseif(!validate_email_chars($email)) {
+      $errors[] = "E-Mail must contain only letters, numbers, and the symbols @._ ";
     } elseif(!has_valid_email_format($email)) {
       $errors[] = "E-Mail is not in the correct format.";
     }
@@ -57,6 +63,10 @@
       $errors[] = "Username cannot be blank.";
     } elseif(!validate_username_length($username)) {
       $errors[] = "Username must be between 8 and 255 characters.";
+    } elseif(!validate_username_chars($username)) {
+      $errors[] = "Username must contain only letters, numbers, and the symbol_.";
+    } elseif(!validate_unique_username($username)) {
+      $errors[] = "Username already exists.";
     }
 
     if(empty($errors)) {
@@ -86,6 +96,52 @@
 <?php $page_title = 'Register'; ?>
 <?php include(SHARED_PATH . '/header.php'); ?>
 
+<style>
+.error {color: #FF2020;}
+input[type="text"] {
+  width: 100px;
+}
+input[type="submit"] {
+        margin-left: 20px;
+        color: #fff;
+        background-color #6496c8;
+        text-shadow: -1px 1px #417cb8;
+        border: none;
+}
+body {
+    font-size: 10pt;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    color: DarkCyan;
+    background-color: BlanchedAlmond;
+    line-height: 14pt;
+    padding-left: 5pt;
+    padding-right: 5pt;
+    padding-top: 5pt;
+}
+
+h1 {
+    font: 14pt Verdana, Geneva, Arial, Helvetica, sans-serif;
+    color: DarkGreen;
+    font-weight: bold;
+    line-height: 20pt;
+}
+
+h2 {
+    font: 12pt Verdana, Geneva, Arial, Helvetica, sans-serif;
+    color: DarkSeaGreen;
+    font-weight: bold;
+    line-height: 20pt;
+}
+
+p {
+    font-size: 11pt;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    color: Maroon;
+    background-color: BlanchedAlmond;
+    line-height: 14pt;
+}
+</style>
+
 <div id="main-content">
   <h1>Register</h1>
   <p>Register to become a Globitek Partner.</p>
@@ -94,11 +150,13 @@
     // TODO: display any form errors here
     // Hint: private/functions.php can help
     if(!empty($errors)) {
-      echo "<div class=\"errors\">";
+      echo "<div class=\"error\">";
       echo "Please fix the following errors:";
       echo "<ul>";
       foreach($errors as $error) {
-        echo "<li>{$error}</li>";
+        echo "<li>";
+        echo wordwrap(htmlspecialchars($error), 35, "<br>\n");
+        echo "</li>";
       }
       echo "</ul>";
       echo "</div>";
